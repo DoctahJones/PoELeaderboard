@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="PoELeaderboard.Views.LeaderboardView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      xmlns:Views="clr-namespace:PoELeaderboard.Views"
+      xmlns:ViewModels="clr-namespace:PoELeaderboard.ViewModels" 
+      xmlns:local="clr-namespace:PoELeaderboard"
+      d:DesignHeight="400" d:DesignWidth="850"
+      d:DataContext="{d:DesignInstance ViewModels:LeaderboardViewModel}" Margin="0,2,0,0"
+	>
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" x:Key="RightCell">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="TextBlock.Padding" Value="0,0,4,0"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader" x:Key="RightHeader" BasedOn="{StaticResource MetroDataGridColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+        </Style>
+        <local:IntSecondsToStringMinsConverter x:Key="IntSecondsToStringMinsConverter"/>
+        <local:BoolToTickConverter x:Key="BoolToTickConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,2,0,0" Background="#FFEEEEEE">
+            <Button Command="{Binding CloseTabCommand}" Margin="5,0,5,0" ToolTip="Close Tab" Foreground="Red" Width="25">X</Button>
+            <Label FontWeight="Bold">Character Name</Label>
+            <TextBox Text="{Binding CharacterName}" Width="120" ToolTip="Character Name"></TextBox>
+            <Label Margin="5,0,0,0" FontWeight="Bold">League</Label>
+            <Controls:SplitButton 
+                HorizontalContentAlignment="Left"
+                HorizontalAlignment="Center"
+                VerticalContentAlignment="Center"
+                SelectedItem="{Binding SelectedLeague}"
+                ItemsSource="{Binding Leagues}"
+                DisplayMemberPath="Name"
+                VerticalAlignment="Center" 
+                ToolTip="League" Width="120" />
+            <Label FontWeight="Bold" Margin="5,0,0,0">Type</Label>
+            <Controls:SplitButton 
+                HorizontalContentAlignment="Left"
+                HorizontalAlignment="Center"
+                VerticalContentAlignment="Center"
+                SelectedItem="{Binding SelectedLeaderboardType}"
+                ItemsSource="{Binding LeaderboardTypes}"
+                VerticalAlignment="Center" Width="80" ToolTip="League Type" />
+            <Label FontWeight="Bold" Margin="5,0,0,0">Difficulty</Label>
+            <Controls:SplitButton 
+                HorizontalContentAlignment="Left"
+                HorizontalAlignment="Center"
+                VerticalContentAlignment="Center"
+                SelectedItem="{Binding SelectedDifficulty}"
+                ItemsSource="{Binding Difficulties}"
+                DisplayMemberPath="Name"
+                IsEnabled="{Binding DifficultiesEnabled}"
+                VerticalAlignment="Center" Width="80" ToolTip="Difficulty" />
+            <Button Command="{Binding SearchCommand}"  Content="{Binding SearchCancelButtonText}" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Content}"  Margin="5,0,0,0" Width="70" IsDefault="True"></Button>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+            Name="LeaderBoardGrid"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Visible"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            IsReadOnly="True"
+            ItemsSource="{Binding Leaderboard.LeaderboardCharacters}" 
+            SelectedItem="{Binding SelectedCharacterInGrid}"
+            Margin="0,3,0,0" Background="{x:Null}" BorderBrush="#CC647687" 
+            SelectionChanged="LeaderBoardGrid_SelectionChanged" >
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource MetroDataGridRow}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Dead}" Value="True">
+                            <Setter Property="Foreground" Value="#FFD30000"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Online, Converter={StaticResource BoolToTickConverter}}" Header="Online" ElementStyle="{StaticResource RightCell}" />
+                <DataGridTextColumn Binding="{Binding Rank}" Header="Rank" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightCell}" Width="65" />
+                <DataGridTextColumn Binding="{Binding CharacterName}" Header="Character Name" Width="140" />
+                <DataGridTextColumn Binding="{Binding AccountName}" Header="Account Name" Width="140" />
+                <DataGridTextColumn Binding="{Binding Level}" Header="Level" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightCell}" />
+                <DataGridTextColumn Binding="{Binding CharacterClass}" Header="Class" />
+                <DataGridTextColumn Binding="{Binding Experience}" Header="XP" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightCell}" Width="80" />
+                <DataGridTextColumn Binding="{Binding Challenges}" Header="Challenges" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightCell}" />
+                <DataGridTextColumn Binding="{Binding TimeLab, Converter={StaticResource IntSecondsToStringMinsConverter}}" Header="Labyrinth Time" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightCell}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
