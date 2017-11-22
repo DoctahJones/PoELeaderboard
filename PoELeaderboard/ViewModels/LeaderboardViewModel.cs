@@ -280,11 +280,13 @@ namespace PoELeaderboard.ViewModels
                 && e.DifficultyUpdated == this.difficultySearchedFor.IntValue)
             {
                 var updatedLeaderboard = this.mainWindowViewModel.LeaderboardCollection.GetLeaderboard(e.LeagueUpdated, this.typeSearchedFor, this.difficultySearchedFor.IntValue);
-                if (updatedLeaderboard.LastTimeUpdated != Leaderboard.LastTimeUpdated)
+
+                if (Leaderboard != null && updatedLeaderboard.LastTimeUpdated == Leaderboard.LastTimeUpdated)
                 {
-                    Leaderboard = updatedLeaderboard;
-                    this.lastTimeUpdated = e.TimeUpdated;
+                    return;
                 }
+                Leaderboard = updatedLeaderboard;
+                this.lastTimeUpdated = e.TimeUpdated;
             }
         }
 
